@@ -1,0 +1,59 @@
+1) QLoRA: Efficient Finetuning of Quantized LLMs
+
+1. What is QLoRA and how does it differ from standard LoRA?
+QLoRA is a method that fine-tunes large models efficiently by combining low-rank adapters (LoRA) with 4-bit quantized base models. Whereas LoRA keeps the base model in full precision and QLoRA compresses it to save memory while still training adapter layers in higher precision.
+
+2. Explain the role and benefits of the NormalFloat4 (NF4) quantization format.
+NF4 is a 4-bit floating point format designed for neural network weights. It represents values in a way that is same as a normal distribution, which helps preserve accuracy while drastically reduce the memory usage.
+
+3. What is “double quantization” and why is it useful?
+Double quantization means compressing not just the model weights, but also the quantization parameters themselves. It reduces memory overhead even further, making the whole setup more efficient, especially for large-scale models.
+
+4. How do paged optimizers help in memory management during training?
+Paged optimizers reduce GPU memory usage by storing less frequently accessed optimizer states (like momentum) in CPU memory or disk, loading them into GPU memory only when needed. This lets you train bigger models on smaller hardware.
+
+5. Why is QLoRA significant in enabling large model finetuning on limited hardware?
+Because it allows you to fine-tune huge models using much less memory by combining quantized weights, adapter layers, and smart memory management — making large-scale training possible even on consumer GPUs.
+
+6. Suggest one possible improvement or variation to the QLoRA method. Why might it help?
+A possible improvement is adding a Mixture-of-Experts system on top of QLoRA, so only a subset of adapters are activated per input. This could reduce compute needs even further and improve specialization across tasks.
+
+2) PokerGPT: Lightweight Solver for Multi‑Player Poker
+
+1. Describe the overall pipeline of PokerGPT from raw data to trained model.
+It starts by generating poker hands using simulations, then structures the data into model-friendly inputs. The model is first trained to imitate expert moves, and then improved using reinforcement learning based on performance feedback. Finally, it’s evaluated through matches.
+
+2. What makes PokerGPT different from traditional poker solvers like CFR or DeepStack?
+PokerGPT uses a language-model-style, data-driven approach instead of building a full game tree or solving via recursion. It's lighter, faster, and doesn’t require complex online computation at inference time.
+
+3. Why is RLHF used in PokerGPT and how does it affect decision-making quality?
+RLHF helps PokerGPT go beyond copying data by optimizing for higher winning probability. It sharpens the model’s judgment in high-stakes or uncertain scenarios like bluffing and value betting.
+
+4. What are the advantages of using LLMs for multiplayer poker games?
+LLMs generalize well to complex interactions, can process diverse game states efficiently, and make decisions quickly. They're also more scalable to new formats and player types without needing new game trees.
+
+5. What challenges might arise when scaling PokerGPT to more complex games like Omaha?
+Omaha has many more possible hand combinations, making it harder to train, represent, and evaluate strategies effectively. More data and smarter architectures would be needed to capture the game’s depth.
+
+6. Suggest one possible extension or improvement to PokerGPT and explain its benefit.
+Adding an opponent modeling module would let PokerGPT adapt its strategy based on who it’s playing against, leading to smarter and more personalized playstyles.
+
+3) GRPO (Group Relative PPO) – DeepSeekMath 7B
+1. What is the main idea behind GRPO and how does it differ from traditional PPO?
+GRPO trains the model by comparing how well different answers to the same prompt perform relative to each other. Unlike PPO, it doesn’t rely on absolute rewards or a value estimator — just how each sample ranks in its group.
+
+2. How does GRPO eliminate the need for a separate value network?
+Instead of estimating the expected reward with a value network, GRPO just looks at how each answer performs within a batch, using their normalized scores to decide which ones are better.
+
+3. What is the significance of using z-score normalization for reward signals?
+Z-scoring turns raw rewards into relative performance scores, making training more stable and consistent across different questions or reward scales. It’s a way of saying “how good is this answer compared to others?”
+
+4. Why might GRPO be better suited for math reasoning tasks than PPO?
+Because math answers are either right or wrong — there’s not always a smooth gradient to follow. GRPO can still learn by rewarding answers that are closer to being correct, even if none are perfect.
+
+5. What are potential weaknesses of GRPO when all sampled outputs are poor?
+If all answers are bad, GRPO still treats the "least bad" one as a positive signal. This can reinforce wrong patterns and lead to slow or misleading learning.
+
+6. Suggest a modification to GRPO to make it more robust to low-quality output groups.
+A fix could be blending relative and absolute rewards — only rewarding samples if they’re both better than their peers and meet a basic correctness threshold. That way, we don’t reward garbage just because it’s the best garbage.
+
